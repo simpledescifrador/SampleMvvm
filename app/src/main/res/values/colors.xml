@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -25,10 +26,13 @@
     <!--colorPrimary colors map to components and elements, such as app bars and buttons. -->
     <!--colorSecondary colors are most often used as accents on components, such as FABs and -->
     <!--selection controls.-->
-    <color name="color_primary">#6200ee</color>
-    <color name="color_primary_variant">#3700b3</color>
+    <color name="color_primary">#FF6200EE</color>
+    <color name="color_primary_opaque">#A473EA</color>
+    <color name="color_primary_variant">#FF3700B3</color>
     <color name="color_secondary">#03dac6</color>
     <color name="color_secondary_variant">#018786</color>
+
+    <color name="color_hyperlink">#0080E2</color>
 
     <!--colorBackground appears behind scrollable content and is used for the default window-->
     <!--background. colorSurface is mapped to the surface of components such as cards, sheets-->
@@ -45,4 +49,5 @@
     <color name="color_on_background">#000000</color>
     <color name="color_on_surface">#000000</color>
     <color name="color_on_error">#ffffff</color>
+
 </resources>

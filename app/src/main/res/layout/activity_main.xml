@@ -6,24 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.MainActivity">
 
-    <TextView
-        android:textColor="@color/black"
-        android:id="@+id/tv_hellow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Click Me"
-        app:layout_constraintEnd_toEndOf="@+id/tv_hellow"
-        app:layout_constraintStart_toStartOf="@+id/tv_hellow"
-        app:layout_constraintTop_toBottomOf="@+id/tv_hellow" />
-
+    <FrameLayout
+        android:id="@+id/frameLayout_home_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!-- Main content -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNav_home_nav"
+            style="@style/Widget.MaterialComponents.BottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_gravity="bottom"
+            android:elevation="8dp"
+            app:itemIconTint="@color/selector_bottom_nav"
+            app:itemTextColor="@color/selector_bottom_nav"
+            app:menu="@menu/menu_main_nav" />
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
