@@ -1,6 +1,7 @@
 package com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment;
 
 import android.annotation.SuppressLint;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
@@ -33,8 +34,10 @@ import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppoin
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.Loading;
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.OnInitLoaded;
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.SetAvailableTimeSlots;
+import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.SetServiceDuration;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -48,13 +51,14 @@ public class NewAppointmentActivity extends BaseActivity<NewAppointmentViewModel
 
     private Chip mChipPetGrooming, mChipClinic;
 
-    private TextInputEditText mInputEditTextAppointmentDate, mInputEditTextNote;
+    private TextInputEditText mInputEditTextAppointmentDate, mInputEditTextNote, mInputEditTextAppointmentTime;
 
-    private TextInputLayout mInputLayoutAppointmentDate, mInputLayoutNote, mInputLayoutServices, mInputLayoutPets;
+    private TextInputLayout mInputLayoutAppointmentDate, mInputLayoutNote, mInputLayoutServices, mInputLayoutPets,
+            mInputLayoutAppointmentTime;
 
     private String mSetSelectedServiceType = "", mSetSelectedService = "";
 
-    private TextView mTextViewNoSlotsAvailable;
+    private TextView mTextViewNoSlotsAvailable, mTextViewServiceDuration;
 
     private NewAppointmentViewModel mViewModel;
 
@@ -92,10 +96,12 @@ public class NewAppointmentActivity extends BaseActivity<NewAppointmentViewModel
         mInputLayoutPets = findViewById(R.id.inputLayout_newAppointment_pets);
         mInputLayoutAppointmentDate = findViewById(R.id.inputLayout_newAppointment_date);
         mInputLayoutNote = findViewById(R.id.inputLayout_newAppointment_note);
+        mInputLayoutAppointmentTime = findViewById(R.id.inputLayout_newAppointment_time);
 
         //TextEditText
         mInputEditTextAppointmentDate = findViewById(R.id.inputText_newAppointment_date);
         mInputEditTextNote = findViewById(R.id.inputText_newAppointment_note);
+        mInputEditTextAppointmentTime = findViewById(R.id.inputText_newAppointment_time);
 
         //AutoComplete
         mAutoCompleteTextViewServices = findViewById(R.id.autoCompleteTextView_newAppointment_subServiceType);
@@ -113,6 +119,7 @@ public class NewAppointmentActivity extends BaseActivity<NewAppointmentViewModel
 
         //TextView
         mTextViewNoSlotsAvailable = findViewById(R.id.textView_newAppointment_noSlots);
+        mTextViewServiceDuration = findViewById(R.id.textView_newAppointment_serviceDuration);
 
     }
 
@@ -136,6 +143,23 @@ public class NewAppointmentActivity extends BaseActivity<NewAppointmentViewModel
             });
             picker.show(getSupportFragmentManager(), picker.toString());
         });
+
+        mInputEditTextAppointmentTime.setOnClickListener(v -> {
+            Calendar currentTime = Calendar.getInstance();
+            int hour = currentTime.get(Calendar.HOUR_OF_DAY);
+            int minute = currentTime.get(Calendar.MINUTE);
+            TimePickerDialog mTimePicker;
+            mTimePicker = new TimePickerDialog(this,
+                    (timePicker, selectedHour, selectedMinute) -> mInputEditTextAppointmentTime.setText(
+                            String.format("%02d:%02d", selectedHour, selectedMinute)), hour, minute,
+                    true);//Yes 24 hour time
+            mTimePicker.setTitle("Select Time");
+            mTimePicker.show();
+        });
+
+        mAutoCompleteTextViewServices.setOnItemClickListener(
+                (parent, view, position, id) -> mViewModel
+                        .onSelectedService(parent.getItemAtPosition(position).toString()));
 
         mChipGroupServiceCategory.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == mChipPetGrooming.getId()) {
@@ -210,6 +234,9 @@ public class NewAppointmentActivity extends BaseActivity<NewAppointmentViewModel
                     showToast(error.getServiceTypeError(), Toast.LENGTH_SHORT);
                 }
 
+                if (error.getServicesError() != null) {
+                    mTextViewServiceDuration.setVisibility(View.GONE);
+                }
                 mInputLayoutServices.setError(error.getServicesError());
                 mInputLayoutPets.setError(error.getPetError());
                 mInputLayoutAppointmentDate.setError(error.getAppointmentDateError());
@@ -238,6 +265,9 @@ public class NewAppointmentActivity extends BaseActivity<NewAppointmentViewModel
                 } else {
                     mTextViewNoSlotsAvailable.setVisibility(View.VISIBLE);
                 }
+            } else if (viewState instanceof SetServiceDuration) {
+                mTextViewServiceDuration.setText(((SetServiceDuration) viewState).getDuration());
+                mTextViewServiceDuration.setVisibility(View.VISIBLE);
             }
         });
 

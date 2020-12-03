@@ -11,11 +11,29 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputLayout_newAppointment_pets"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:hint="Pets*"
+            app:errorEnabled="true">
+
+            <AutoCompleteTextView
+                android:id="@+id/autoCompleteTextView_newAppointment_pets"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <TextView
             android:id="@+id/textView12"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:paddingHorizontal="16dp"
             android:text="Service Category"
             android:textColor="@color/color_on_background"
@@ -75,23 +93,15 @@
         </com.google.android.material.textfield.TextInputLayout>
 
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/inputLayout_newAppointment_pets"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        <TextView
+            android:id="@+id/textView_newAppointment_serviceDuration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:hint="Pets*"
-            app:errorEnabled="true">
-
-            <AutoCompleteTextView
-                android:id="@+id/autoCompleteTextView_newAppointment_pets"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginHorizontal="16dp"
+            android:fontFamily="@font/roboto"
+            android:text="Service Duration: 60 mins"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputLayout_newAppointment_date"
@@ -113,13 +123,34 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputLayout_newAppointment_time"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:hint="Appointment Time*"
+            app:errorEnabled="true"
+            app:placeholderText="YYYY/MM/DD"
+            app:startIconDrawable="@drawable/ic_time_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputText_newAppointment_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="time" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <Button
             android:id="@+id/button_newAppointment_searchSlots"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:text="Search Available Slots" />
+            android:text="Search Available Slots"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/textView13"
@@ -129,7 +160,8 @@
             android:paddingHorizontal="16dp"
             android:text="Available Time Slots"
             android:textColor="@color/color_on_background"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroup_newAppointment_timeSlots"
@@ -141,13 +173,14 @@
         </com.google.android.material.chip.ChipGroup>
 
         <TextView
-            android:padding="16dp"
             android:id="@+id/textView_newAppointment_noSlots"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
+            android:padding="16dp"
             android:text="No Available Slots"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:visibility="gone" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputLayout_newAppointment_note"

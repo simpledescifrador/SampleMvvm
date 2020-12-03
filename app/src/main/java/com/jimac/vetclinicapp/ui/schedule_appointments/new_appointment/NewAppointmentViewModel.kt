@@ -8,7 +8,6 @@ import com.jimac.vetclinicapp.data.AppDataManager
 import com.jimac.vetclinicapp.data.models.Appointment
 import com.jimac.vetclinicapp.data.models.ClinicService
 import com.jimac.vetclinicapp.data.models.Pet
-import com.jimac.vetclinicapp.data.models.TimeSlot
 import com.jimac.vetclinicapp.ui.base.BaseViewModel
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ActionState.ProceedToSubmitAppointment
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.ChangeServicesList
@@ -18,6 +17,7 @@ import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppoin
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.Loading
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.OnInitLoaded
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.SetAvailableTimeSlots
+import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.SetServiceDuration
 import com.jimac.vetclinicapp.utils.SingleLiveEvent
 import kotlinx.coroutines.launch
 
@@ -32,6 +32,7 @@ class NewAppointmentViewModel(appDataManager: AppDataManager?) : BaseViewModel(a
     private var serviceType = ArrayList<String>()
     private var servicesMap = HashMap<String, ArrayList<ClinicService>>()
     private var pets = ArrayList<Pet>()
+    private var selectedServices = ArrayList<ClinicService>()
 
     fun validateForm(appointment: Appointment) {
         var formValidation = true
@@ -113,6 +114,8 @@ class NewAppointmentViewModel(appDataManager: AppDataManager?) : BaseViewModel(a
 
     fun onChangeServices(serviceType: String) {
         viewState.value = servicesMap[serviceType]?.let {
+            selectedServices = it
+
             val servicesListString = arrayListOf<String>()
 
             it.forEach { clinicService ->
@@ -120,6 +123,17 @@ class NewAppointmentViewModel(appDataManager: AppDataManager?) : BaseViewModel(a
             }
             ChangeServicesList(servicesListString)
         }
+    }
+
+    fun onSelectedService(service: String) {
+        var duration = "Service Duration: "
+        selectedServices.forEach {
+            if (service == it.title) {
+                duration += "${it.duration} mins"
+            }
+        }
+
+        viewState.value = SetServiceDuration(duration)
     }
 
     fun init() {
@@ -222,6 +236,7 @@ class NewAppointmentViewModel(appDataManager: AppDataManager?) : BaseViewModel(a
         ) : ViewState()
 
         data class ChangeServicesList(var services: ArrayList<String>) : ViewState()
+        data class SetServiceDuration(val duration: String) : ViewState()
         data class FormError(
             var serviceTypeError: String?,
             var servicesError: String?,
