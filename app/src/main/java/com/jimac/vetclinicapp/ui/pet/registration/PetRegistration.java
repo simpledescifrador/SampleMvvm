@@ -24,7 +24,6 @@ import com.jimac.vetclinicapp.R;
 import com.jimac.vetclinicapp.data.AppDataManager;
 import com.jimac.vetclinicapp.data.models.Pet;
 import com.jimac.vetclinicapp.ui.base.BaseActivity;
-import com.jimac.vetclinicapp.ui.main.MainActivity;
 import com.jimac.vetclinicapp.ui.pet.registration.PetRegistrationViewModel.ActionState.ProceedToPetRegistration;
 import com.jimac.vetclinicapp.ui.pet.registration.PetRegistrationViewModel.ViewState.ChangeBreedList;
 import com.jimac.vetclinicapp.ui.pet.registration.PetRegistrationViewModel.ViewState.FormError;
@@ -119,6 +118,13 @@ public class PetRegistration extends BaseActivity<PetRegistrationViewModel> {
         }
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        finish();
+        return true;
+    }
+
     @NonNull
     @Override
     protected PetRegistrationViewModel getViewModel() {
@@ -130,6 +136,8 @@ public class PetRegistration extends BaseActivity<PetRegistrationViewModel> {
 
     private void initViews() {
         setTitle("Add Pet");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         //TextInputLayout
         mInputLayoutPetName = findViewById(R.id.inputLayout_petReg_petName);
         mInputLayoutSpecies = findViewById(R.id.inputLayout_petReg_species);
@@ -244,6 +252,8 @@ public class PetRegistration extends BaseActivity<PetRegistrationViewModel> {
             pet.setPetImageUrl(imagePath);
             pet.setDescription(description);
 
+            AppUtils.hideKeyboard(this);
+
             mViewModel.validateForm(pet);
         });
 
@@ -309,11 +319,7 @@ public class PetRegistration extends BaseActivity<PetRegistrationViewModel> {
                 showToast(((PetRegistrationFailure) viewState).getErrorMessage(), Toast.LENGTH_SHORT);
             } else if (viewState instanceof PetRegistrationSuccess) {
                 showToast("Your Pet was Successfully Added.", Toast.LENGTH_SHORT);
-                Intent mainIntent = new Intent(this, MainActivity.class);
-                mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                mainIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(mainIntent);
+                setResult(RESULT_OK);
                 finish();
             }
         });

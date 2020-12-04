@@ -18,7 +18,9 @@
         android:theme="@style/MyTheme.DayNight">
         <activity android:name=".ui.schedule_appointments.new_appointment.NewAppointmentActivity" />
         <activity android:name=".ui.pet.registration.PetRegistration" />
-        <activity android:name=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:theme="@style/MyTheme.DayNight.NoActionBar" />
         <activity android:name=".ui.authentication.registration.RegistrationActivity" />
         <activity android:name=".ui.authentication.login.LoginActivity">
             <intent-filter>

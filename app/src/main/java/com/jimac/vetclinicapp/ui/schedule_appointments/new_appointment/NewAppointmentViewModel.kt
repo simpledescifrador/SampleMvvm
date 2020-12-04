@@ -10,6 +10,7 @@ import com.jimac.vetclinicapp.data.models.ClinicService
 import com.jimac.vetclinicapp.data.models.Pet
 import com.jimac.vetclinicapp.ui.base.BaseViewModel
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ActionState.ProceedToSubmitAppointment
+import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.AppointmentAddedSuccessful
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.ChangeServicesList
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.Error
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.FormError
@@ -34,6 +35,45 @@ class NewAppointmentViewModel(appDataManager: AppDataManager?) : BaseViewModel(a
     private var pets = ArrayList<Pet>()
     private var selectedServices = ArrayList<ClinicService>()
 
+    fun addAppointment(appointment: Appointment) {
+        //Get Service Id
+        selectedServices.forEach {
+            if (it.title == appointment.service) {
+                appointment.serviceId = it.serviceId
+                appointment.duration = it.duration
+            }
+        }
+
+        //Get Pet Id
+        pets.forEach {
+            if (it.name == appointment.petName) {
+                appointment.petId = it.petId
+            }
+        }
+
+
+        viewState.value = Loading
+        viewModelScope.launch {
+            appDataManager.networkRepository.addAppointment(appointment).run {
+                if (status == 0) {
+                    if (errorCode != 0) {
+                        when (errorCode) {
+                            99 -> {
+                                //Internal Error 505;
+                                Log.e("NewAppointViewModel", message)
+                            }
+                        }
+                    }
+                    viewState.postValue(Error(message))
+                } else {
+                    data?.let {
+                        viewState.postValue(AppointmentAddedSuccessful(data.appointmentNumber))
+                    }
+                }
+            }
+        }
+    }
+
     fun validateForm(appointment: Appointment) {
         var formValidation = true
 
@@ -42,6 +82,7 @@ class NewAppointmentViewModel(appDataManager: AppDataManager?) : BaseViewModel(a
         var petError: String? = null
         var appointmentDateError: String? = null
         var timeSlotError: String? = null
+        var timeError: String? = null
 
         //Service Type Validations
         if (appointment.serviceType.isEmpty()) {
@@ -94,17 +135,22 @@ class NewAppointmentViewModel(appDataManager: AppDataManager?) : BaseViewModel(a
         }
 
         //Time Slot Validations
-        if (appointment.timeSlot.isEmpty()) {
-            timeSlotError = "Time Slot is required"
+        if(appointment.startTime.isEmpty()) {
+            timeError = "Required field"
             formValidation = false
         }
+//        if (appointment.timeSlot.isEmpty()) {
+//            timeSlotError = "Time Slot is required"
+//            formValidation = false
+//        }
 
         viewState.value = FormError(
             serviceTypeError,
             clinicServiceError,
             petError,
             appointmentDateError,
-            timeSlotError
+            timeSlotError,
+            timeError
         )
 
         if (formValidation) {
@@ -230,6 +276,7 @@ class NewAppointmentViewModel(appDataManager: AppDataManager?) : BaseViewModel(a
         object Loading : ViewState()
         object InitLoading : ViewState()
         data class Error(var errorMessage: String) : ViewState()
+        data class AppointmentAddedSuccessful(val appointmentNumber: String) : ViewState()
         data class OnInitLoaded(
             var serviceType: ArrayList<String>,
             var petNames: ArrayList<String>
@@ -242,7 +289,8 @@ class NewAppointmentViewModel(appDataManager: AppDataManager?) : BaseViewModel(a
             var servicesError: String?,
             var petError: String?,
             var appointmentDateError: String?,
-            var timeSlotsError: String?
+            var timeSlotsError: String?,
+            var timeError: String?
         ) : ViewState()
 
         data class SetAvailableTimeSlots(val timeSlots: ArrayList<String>) : ViewState()

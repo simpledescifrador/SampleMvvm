@@ -3,6 +3,7 @@
     <!--Top level DayNight theme to be used in AndroidManifest.xml-->
     <style name="MyTheme.DayNight" parent="Base.MyTheme" />
 
+
     <!--Base custom theme which will be shared between both light and dark theme variants-->
     <style name="Base.MyTheme" parent="Base.MaterialThemeBuilder">
         <!--Material color attributes -->
@@ -24,13 +25,12 @@
         <!--Component styles-->
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.Dialog.Alert</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
-
     </style>
 
     <style name="Base.MaterialThemeBuilder" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <item name="android:statusBarColor">?colorSurface</item>
+        <item name="android:statusBarColor">@color/color_primary</item>
         <item name="android:windowLightStatusBar">true</item>
-<!--        <item name="android:navigationBarColor">?android:colorBackground</item>-->
+        <!--        <item name="android:navigationBarColor">?android:colorBackground</item>-->
         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
         <item name="android:navigationBarDividerColor" tools:ignore="NewApi">?colorControlHighlight</item>
 

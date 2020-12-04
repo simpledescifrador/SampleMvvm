@@ -72,10 +72,13 @@ public class LoginActivity extends BaseActivity<LoginViewModel> {
 
     private void registerListeners() {
         mButtonToRegister.setOnClickListener(v -> startActivity(new Intent(this, RegistrationActivity.class)));
-        mButtonLoginSubmit.setOnClickListener(v -> mViewModel.validateForm(
-                mInputTextEmail.getText().toString(),
-                mInputTextPassword.getText().toString()
-        ));
+        mButtonLoginSubmit.setOnClickListener(v -> {
+            AppUtils.hideKeyboard(this);
+            mViewModel.validateForm(
+                    mInputTextEmail.getText().toString(),
+                    mInputTextPassword.getText().toString()
+            );
+        });
     }
 
     private void setUpObservers() {

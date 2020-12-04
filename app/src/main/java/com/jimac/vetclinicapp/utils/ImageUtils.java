@@ -26,6 +26,11 @@ public class ImageUtils {
 
     private String mImagePath = "";
 
+    public static Bitmap convertBase64ToBitmap(String base64String) {
+        byte[] decodedString = Base64.decode(base64String, Base64.DEFAULT | Base64.NO_WRAP);
+        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+    }
+
     public ImageUtils(final Activity activity) {
         mActivity = activity;
     }

@@ -18,6 +18,7 @@ import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialDatePicker.Builder;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.jimac.vetclinicapp.App;
@@ -27,6 +28,7 @@ import com.jimac.vetclinicapp.data.models.Appointment;
 import com.jimac.vetclinicapp.ui.base.BaseActivity;
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ActionState.ProceedToSubmitAppointment;
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewModelFactory;
+import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.AppointmentAddedSuccessful;
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.ChangeServicesList;
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.Error;
 import com.jimac.vetclinicapp.ui.schedule_appointments.new_appointment.NewAppointmentViewModel.ViewState.FormError;
@@ -197,6 +199,7 @@ public class NewAppointmentActivity extends BaseActivity<NewAppointmentViewModel
             appointment.setPetName(petName);
             appointment.setAppointmentDate(appointmentDate);
             appointment.setTimeSlot(timeSlot);
+            appointment.setStartTime(mInputEditTextAppointmentTime.getText().toString());
             appointment.setNote(note);
 
             mViewModel.validateForm(appointment);
@@ -207,7 +210,7 @@ public class NewAppointmentActivity extends BaseActivity<NewAppointmentViewModel
         mViewModel.init();
         mViewModel.getViewState().observe(this, viewState -> {
             if (viewState instanceof Loading) {
-                showLoading();
+                showLoading("Loading");
             } else if (viewState instanceof InitLoading) {
                 showLoading("Retrieving Data");
             } else {
@@ -244,6 +247,8 @@ public class NewAppointmentActivity extends BaseActivity<NewAppointmentViewModel
                 if (error.getTimeSlotsError() != null) {
                     showToast(error.getTimeSlotsError(), Toast.LENGTH_SHORT);
                 }
+
+                mInputLayoutAppointmentTime.setError(error.getTimeError());
             } else if (viewState instanceof SetAvailableTimeSlots) {
                 ArrayList<String> timeSlots = ((SetAvailableTimeSlots) viewState).getTimeSlots();
                 Set<String> availableSlots = new LinkedHashSet<>(timeSlots);
@@ -268,11 +273,35 @@ public class NewAppointmentActivity extends BaseActivity<NewAppointmentViewModel
             } else if (viewState instanceof SetServiceDuration) {
                 mTextViewServiceDuration.setText(((SetServiceDuration) viewState).getDuration());
                 mTextViewServiceDuration.setVisibility(View.VISIBLE);
+            } else if (viewState instanceof AppointmentAddedSuccessful) {
+
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
+                        .setTitle("Appointment Added")
+                        .setMessage(
+                                "Your Appointment No.: " + ((AppointmentAddedSuccessful) viewState)
+                                        .getAppointmentNumber())
+                        .setPositiveButton("Ok", (dialog, id) -> {
+                            dialog.dismiss();
+                            setResult(RESULT_OK);
+                            finish();
+                        });
+                builder.create().show();
             }
         });
 
         mViewModel.getActionState().observe(this, actionState -> {
             if (actionState instanceof ProceedToSubmitAppointment) {
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
+                        .setTitle("Confirm")
+                        .setMessage("Proceed to add your appointment?")
+                        .setPositiveButton("Ok", (dialog, id) -> {
+                            dialog.dismiss();
+                            mViewModel.addAppointment(((ProceedToSubmitAppointment) actionState).getAppointment());
+                        })
+                        .setNegativeButton("Cancel", (dialog, id) -> {
+                            dialog.dismiss();
+                        });
+                builder.create().show();
 
             }
         });

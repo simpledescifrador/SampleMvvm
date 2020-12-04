@@ -1,16 +1,21 @@
 package com.jimac.vetclinicapp.utils;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -82,6 +87,11 @@ public class AppUtils {
         return currentTimeMillis;
     }
 
+    public static Date getDateFromString(String date, String format) throws ParseException {
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat(format);
+        return formatter.parse(date);
+    }
+
     public static String getFormatFromDecimalValue(Double value) {
         String amount = String.valueOf(value);
         amount = amount.replaceAll(",", "");
@@ -103,7 +113,6 @@ public class AppUtils {
         hours = diff / (60 * 60 * 1000);
         return hours;
     }
-
 
     public static String getLocalDateFromUTCTime(String utcTime) {
 
@@ -209,6 +218,17 @@ public class AppUtils {
             return "Dec";
         }
         return "Not Found";
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(((View) view).getWindowToken(), 0);
     }
 
     public static boolean isGPSEnable(Context context) {

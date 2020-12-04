@@ -1,12 +1,16 @@
 package com.jimac.vetclinicapp.data.network
 
+import com.jimac.vetclinicapp.data.models.Appointment
 import com.jimac.vetclinicapp.data.models.Client
 import com.jimac.vetclinicapp.data.models.Pet
 import com.jimac.vetclinicapp.data.models.TimeSlot
+import com.jimac.vetclinicapp.data.network.data_responses.AddAppointmentResponse
 import com.jimac.vetclinicapp.data.network.data_responses.AddPetResponse
 import com.jimac.vetclinicapp.data.network.data_responses.GetNewSchedDataResponse
 import com.jimac.vetclinicapp.data.network.data_responses.GetPetDataResponse
 import com.jimac.vetclinicapp.data.network.payloads.EmptyPayload
+import com.jimac.vetclinicapp.data.network.payloads.GetClientAppointmentsPayload
+import com.jimac.vetclinicapp.data.network.payloads.GetClientPetsPayload
 import com.jimac.vetclinicapp.data.network.payloads.GetTimeSlotsPayload
 import com.jimac.vetclinicapp.data.network.payloads.LoginPayload
 import com.jimac.vetclinicapp.data.network.payloads.NewScheduleDataPayload
@@ -66,5 +70,22 @@ class NetworkRepository : NetworkHelper() {
                 )
             )
         )
+    }
+
+    override suspend fun addAppointment(appointment: Appointment): ResponseWrapper<AddAppointmentResponse> {
+        return mApiService.addAppointment(RequestWrapper("newAppointment", appointment))
+    }
+
+    override suspend fun getClientAppointments(clientId: Int): ResponseWrapper<ArrayList<Appointment>> {
+        return mApiService.getClientAppointments(
+            RequestWrapper(
+                "getClientAppointments",
+                GetClientAppointmentsPayload(clientId)
+            )
+        )
+    }
+
+    override suspend fun getClientPets(clientId: Int): ResponseWrapper<ArrayList<Pet>> {
+        return mApiService.getClientPets(RequestWrapper("getClientPets", GetClientPetsPayload(clientId)))
     }
 }

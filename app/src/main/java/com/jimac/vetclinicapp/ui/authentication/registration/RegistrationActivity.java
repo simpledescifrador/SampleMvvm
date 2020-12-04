@@ -9,6 +9,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -24,8 +25,10 @@ import com.jimac.vetclinicapp.ui.authentication.registration.RegistrationViewMod
 import com.jimac.vetclinicapp.ui.authentication.registration.RegistrationViewModel.ViewState.RegistrationFailure;
 import com.jimac.vetclinicapp.ui.authentication.registration.RegistrationViewModel.ViewState.RegistrationSuccess;
 import com.jimac.vetclinicapp.ui.base.BaseActivity;
+import com.jimac.vetclinicapp.ui.main.MainActivity;
 import com.jimac.vetclinicapp.ui.pet.registration.PetRegistration;
 import com.jimac.vetclinicapp.utils.AppUtils;
+import com.jimac.vetclinicapp.utils.Constants;
 
 public class RegistrationActivity extends BaseActivity<RegistrationViewModel> {
 
@@ -56,6 +59,18 @@ public class RegistrationActivity extends BaseActivity<RegistrationViewModel> {
         initViews();
         setUpObservers();
         registerListeners();
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, @Nullable final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == Constants.REQUEST_CODE_ADD_PET) {
+            Intent mainIntent = new Intent(this, MainActivity.class);
+            mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mainIntent);
+            finish();
+        }
     }
 
     @Override
@@ -135,7 +150,7 @@ public class RegistrationActivity extends BaseActivity<RegistrationViewModel> {
                     email,
                     password
             );
-
+            AppUtils.hideKeyboard(this);
             mViewModel.validateForm(client, mAgreement);
         });
     }
@@ -171,11 +186,7 @@ public class RegistrationActivity extends BaseActivity<RegistrationViewModel> {
             } else if (viewState instanceof RegistrationSuccess) {
                 showToast("Registration Success", Toast.LENGTH_SHORT);
                 Intent intent = new Intent(this, PetRegistration.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
+                startActivityForResult(intent, Constants.REQUEST_CODE_ADD_PET);
             } else if (viewState instanceof RegistrationFailure) {
                 showToast(((RegistrationFailure) viewState).getErrorMessage(), Toast.LENGTH_SHORT);
             }
